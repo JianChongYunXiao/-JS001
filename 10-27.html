@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>10-27</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            list-style:none;
+        }
+        #list{
+            border:1px solid pink;
+            overflow: hidden;
+            width: 174px;
+        }
+        #list li{
+            text-align: center;
+            line-height:30px;
+            width:50px;
+            height:30px;
+            float:left;
+            background:pink;
+            color:#fff;
+            cursor:pointer;
+            margin-left:5px;
+        }
+       #list li:hover{           /* 设置鼠标悬停时的样式 */
+            background:red;
+            color:#fff;
+        }
+        #box{
+            width:100px;
+            height:50px;
+            border:1px solid red;
+            position:absolute;
+            top:40px;
+            left:0;
+            color:#666;
+            display:none;
+        }
+        #wrap{
+            position:relative;
+        } 
+    </style>
+</head>
+<body>
+    <button id="b1">开始</button>
+    <button id="b2">结束</button>
+    <p id='p'>期待</p>
+    <p id="p1"></p>
+    <div id="wrap">
+        <ul id="list">
+            <li>111</li>
+            <li>222</li>
+            <li>333</li>
+        </ul>
+        <div id="box">11111111</div>
+    </div>
+    <script>
+        // 时间戳 (当前时间到1970年1月1日00时00分00秒的时间距离，以毫秒计算)
+        // console.log(new Date().getTime())  // 方法一  =>1540639501665 
+        // console.log(Date.now()) // 方法二
+        // console.log(+new Date)  // 方法三
+
+        // 获取当前计算机上的时间并输出成X年X月X日X时X分X秒的样式  (有缺陷：当时间只有个位数时，不美观)
+        // let t = new Date()  //  获取当前计算机上的日期、时间
+        // console.log(t)
+        // let years = t.getFullYear()
+        // let month = t.getMonth()
+        // let day = t.getDate()
+        // let hours = t.getHours()
+        // let minutes = t.getMinutes()
+        // let seconds = t.getSeconds()
+        // let time = years + '年' + month +'月' + day +'日' + hours + '时' + minutes + '分' + seconds + '秒'
+        // console.log(name)
+
+        // 获取本地计算机上的日期时间（当时间为个位数时，用 0 补全）
+        // let t = new Date()  // 获取本地的时间
+        // function fn (n){
+        //     return n < 10 ? '0' + n:'' + n;  // 写一个函数 如果传入的 值 为个位数，则在它前方加一个字符串'0'
+        // }
+        // let years = t.getFullYear()  // 在变量t 上获取年份
+        // let month = t.getMonth()     // 
+        // let day = t.getDate()
+        // let hours = t.getHours()
+        // let minutes = t.getMinutes()
+        // let seconds = t.getSeconds()
+        // let time = years + '年' + fn(month) + '月' + fn(day) + '日' + fn(hours) + '时' + fn(minutes) + '分' + fn(seconds) + '秒'
+        // console.log(time)
+
+        // 随机抽取内容
+        let select = ['学习','敲代码','听音乐','读书', '看电影','刷微博','王者荣耀','第五人格','英雄联盟']
+        let timer = null, num = 0, n = 0;     // 创建一个变量 timer 和  window的属性  num n 值为0, 创建全局变量timer是因为以后还要用
+        b1.onclick = function () {           // 创建b1 点击事件
+            timer = setInterval(function(){  // 创建一个连续的定时器，每隔一定时间，出现一个选项，然后将定时器的编号赋值给timer
+                p.innerHTML = select[num]    // 当定时器发挥作用时，p标签的内容也跟着显示为当前定时器循环的那一项 
+                num++                        // 定时器运行一次 num的值就加一次  后置自增
+                n++                          // n 后置自增，如果没有规定定时器连续循环多少次的话，这个参数可以不要。
+                num %= select.length         // 取余，是为了运行次数大于长度时，方便取项
+                if ((n == 100) {              // 当定时器运转100次时，自动停止，显示一个选项 但是只有第100次时会停止，
+                    clearInterval(timer)     // 内容接上一行， 如果想要每次100时都停止，只有重新刷新。 
+                    p.innerHTML = select[num]  // 想法：设置100的整除倍数时停止
+                    n = num = 0;              // 此处 是为了在不刷新的情况下，每过一百次就自动停，也可以在语句的条件中改为：（(n %= 100) == 0） => 模 取余就是当整除100时  模这个修改不确定是否正确
+                }
+            },60)                             // 定时器延时，这是连续定时器，此值为两次定时器之间的时间间隔
+        }
+        b2.onclick = function(){              // 点击事件，点击b2 结束时 运行这个函数 
+            clearInterval(timer)              // 关闭之前运行的定时器
+            p.innerHTML = select[num]         // 标签内容为 随机到的这个值，这个值也可设置成固定的值。
+        }
+
+        //  倒计时
+        // let newTime = new Date('2019 10 30 16:00:00')  // 1、先创建一个变量，值为截止的日期。 
+        // function fn(){                                //  2、然后创建一个函数，
+        //     let nowTime = new Date()                  //  函数中先获取本机的日期时间
+        //     let new1 = Math.floor((newTime - nowTime)/1000) //创建一个变量，值为截止时间减去当前时间/1000（这是距截止时间还有多少秒）向下取整数
+        //     if (new1 <= 0) {                          // 如果时间已经过了截止时间，页面上会显示负值，
+        //         clearInterval(time)                   // 为了避免显示负值，在函数中设一个条件语句，当过了截止日期时，就显示'时间到'
+        //         p1.innerHTML = '时间到'                // 没过截止日期时。就显示还有多久。
+        //     }else{
+        //     let day = Math.floor(new1/86400)          // 获取距截止日期还有几天
+        //     new1 %= 86400                             // 取余  剩下的值为不足一天的时间段
+        //     let hours = Math.floor(new1/3600)         // 获取小时数
+        //     new1 %= 3600                              // 取余  剩下的值为 不足一个小时的数
+        //     let minutes = Math.floor(new1/60)         // 获取还有多少分钟数
+        //     new1 %= 60                                // 取余  ) + '分' + fn1(n剩下的值为不足分钟的秒数
+        //     p1.innerHTML = fn1(day) + '天' + fn1(hours) + '时' + fn1(minutes) + '分' + fn1(new1) + '秒'
+        //     }
+        // }
+        // fn()                                         // 执行函数，此处执行一次函数，是为了刷新后就显示在页面中，如此处没有执行，要等定时器发生作用后才会开始在页面中显示
+        // let time = setInterval(fn,1000)        // 给函数赋值，值为一个连续的定时器。
+        // function fn1(n){                   // 创建一个函数，如果输入的值小于10，那么，在值前面加一个字符串'0'
+        //     return n < 10 ? '0' + n: n
+        // }
+
+        // 导航延迟
+    //     let pos = [0, 40, 90];                
+    //     let txt = ['1111111', '2222222', '3333333'];
+    //     const lis = document.querySelectorAll('li');   // 获取li标签为变量lis 的内容
+    //     let timer = null;
+    //     let n = 0;
+    //     for (let i = 0; i < lis.length; i++) {     // for 循环
+    //         lis[i].onmouseover = box.onmouseover = function(){  // 当鼠标放在li某项时
+    //             clearTimeout(timer);                // 关闭定时器
+    //             box.style.display = 'block';        // 内容框改为显现出来
+    //             if (this.nodeName === 'LI') {       // 当点击第 i 项时，将i的值赋值给 n  // 如果注释掉的话，点击后，下面的内容将不会改变。
+    //                 n = i;
+    //             }
+    //             box.innerHTML = txt[n];             // 内容框显示的内容为 数组TXT 的第n项
+    //             box.style.left = pos[n] + 'px';     // 内容框样式 改变
+    //         }
+    //         lis[i].onmouseout = box.onmouseout = function(){
+    //             timer = setTimeout(function(){          // 当鼠标离开选项 或者 内容时，内容框隐藏，延后一秒。
+    //                 box.style.display = 'none';   
+    //             },1000)
+    //         }
+    //    }
+    </script>
+</body>
+</html>
