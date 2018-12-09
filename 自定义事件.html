@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btn">点击</button>
+    <button id="btn2">点击2</button>
+<script>
+    
+    // xxx.add('click',fn)
+    //映射事件
+    // add(btn,'点击',function(){
+    //     console.log(this);
+    // });
+    // add(btn,'点击',function(){
+    //     alert(2);
+    // });
+
+
+    /*
+        自定义事件:
+            1.收集器（订阅模式）  add
+                目的就是为了收集事件名和事件函数
+            2.触发器（发布模式）trigger
+                当某个条件成立之后,执行对应事件的事件函数
+            3.解除器 off
+                销毁对应事件的事件函数
+
+        自定义事件里面可以有多个执行函数，会依次执行（感觉可在触发器里面进行 修改如何执行）
+        自定义事件可以通过解除器单独解除里面的某一个函数
+    */
+
+    /*
+        订阅模式，就是为了绑定事件和事件函数
+
+        diy:{
+            click:[fn1,fn2],
+            mouseover:[],
+            '点击':[fn1,fn2]
+        }
+
+        ele.diy = {
+            click:[]
+        }
+
+        ele.diy = {
+            click:[]
+        }
+        
+
+    */
+    function add(ele,evName,fn){     // 收集器是为了收集，自定义的   事件名和事件函数           
+        //给传入的ele 绑定一个名为“diy”的属性，值为对象，如果之前绑定过了，就用之前的，如果从来没有绑定过，就为{}
+        ele.diy = ele.diy || {};    //box.diy = {};
+        //看看新建的这个对象（也有可能之前就有）里有没有同样的属性，如果有，就用之前的，没有设置为[]
+        ele.diy[evName] = ele.diy[evName] || [];
+        ele.diy[evName].push(fn);    // 把传入的函数放入绑定的这个元素的这个属性的新建这个名字里面
+    }
+
+    
+    function trigger(ele,evName){      // 触发器  如果条件成立了就执行对应的事件函数
+        //如果元素没有绑定过这个事件，那么就返回null
+        if(!ele.diy[evName])return null;   // 如果里面没有传入相应的函数，则返回null 
+        ele.diy[evName].forEach(fn=>{      // 否则循环ele.diy[evName] 里面的每一项
+            fn.call(ele);                  // 触发元素ele（参数） 依次调用ele.diy[evName]里的这个方法  或者理解为里面的this指向改为传入的ele  此处不清楚
+        });                                
+    }
+
+
+    function off(ele,evName,fnName){                      // 解除器，销毁对应的事件函数
+        if(!ele.diy[evName])return null;                  // 如果 ele.diy[evName])里面是空的，则true  null。
+        /*
+            循环对象中对应的事件数组
+            找到数组中和第三个参数中的函数名一致的函数删除
+        */
+        for(let i=0;i<ele.diy[evName].length;i++){        // ele.diy[evName])里面有内容 则循环它
+            if(ele.diy[evName][i].name === fnName.name){  // 如果ele.diy[evName])中每一项的名字和传入的参数名字一直的话
+                ele.diy[evName].splice(i,1);              // 那么名字相同的这一项在ele.diy[evName])中删除
+                i--;
+            }
+        }
+    }
+
+    // console.dir(off);
+
+    add(btn,'点击',function(){        // 给"点击"事件 添加函数
+        console.log(this);
+    });
+    add(btn,'点击',fn);               // 同样是给"点击"事件添加函数，与前面一个不会重叠，会按在"点击"事件里面的先后顺序进行执行
+
+    function fn(){
+        alert(2);
+    }
+
+
+    btn2.onclick = function(){        // btn2的点击事件
+        off(btn,'点击',fn);           // 将btn的"点击"事件里面的fn函数销毁（解除），不影响里面的匿名函数（打印this） 
+        console.log(btn.diy['点击'])  // 打印btn的diy里的"点击"函数
+    }
+
+   
+    btn.onmousedown = function(ev){   // btn 的按下事件
+        let x = ev.pageX;             // 设置变量X 为按下点的X轴坐标
+        let y = ev.pageY;             // 设置变量Y 为按下点的Y轴坐标
+        btn.onmouseup = function(ev){ // btn的抬起事件
+            // 如果btn的抬起点的X Y 轴坐标与之前按下的X Y 轴坐标，相差不超过5像素的话
+            if(Math.abs(ev.pageX - x) < 5 && Math.abs(ev.pageY - y) < 5){ 
+                trigger(btn,'点击');   // 执行btn的 "点击" 事件
+            }
+        }
+    }
+
+    
+
+
+
+
+    
+</script>
+</body>
+</html>
